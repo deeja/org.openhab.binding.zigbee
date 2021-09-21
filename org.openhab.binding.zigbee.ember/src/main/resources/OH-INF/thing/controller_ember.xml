@@ -131,8 +131,8 @@
 			</parameter>
 			
 			<parameter name="zigbee_initialise" type="boolean" groupName="network">
-				<label>Reset Controller</label>
-				<description>Resets the Controller and sets the configuration to the configured values</description>
+				<label>Reinitialize Controller</label>
+				<description>Resets the coordinator, reinitialises the network, and sets the configuration to the configured values</description>
 				<default>false</default>
 				<verify>true</verify>
 				<advanced>true</advanced>
@@ -158,7 +158,8 @@
 					<option value="22">Channel 22</option>
 					<option value="23">Channel 23</option>
 					<option value="24">Channel 24</option>
-					<option value="25">Channel 25</option>
+                    <option value="25">Channel 25</option>
+                    <option value="26">Channel 26</option>
 				</options>
 				<advanced>true</advanced>
 			</parameter>

@@ -539,20 +539,13 @@ public abstract class ZigBeeCoordinatorHandler extends BaseBridgeHandler
         logger.debug("ZigBee initialise done. channel={}, PanId={}  EPanId={}", currentChannel, currentPanId,
                 currentExtendedPanId);
 
-        try {
-            // Persist the network configuration
-            Configuration configuration = editConfiguration();
-            configuration.put(CONFIGURATION_PANID, currentPanId);
-            if (currentExtendedPanId != null) {
-                configuration.put(CONFIGURATION_EXTENDEDPANID, currentExtendedPanId.toString());
-            }
-            configuration.put(CONFIGURATION_CHANNEL, currentChannel.getChannel());
+        // Set initializeNetwork to false to ensure that if communications to the dongle restarts, we don't reinitialise
+        // the network again!
+        initializeNetwork = false;
 
-            // If the thing is defined statically, then this will fail and we will never start!
-            updateConfiguration(configuration);
-        } catch (IllegalStateException e) {
-            logger.error("Error updating configuration ", e);
-        }
+        // Set initializeNetwork to false to ensure that if communications to the dongle restarts, we don't reinitialise
+        // the network again!
+        initializeNetwork = false;
 
         initializeDongleSpecific();
     }
@@ -655,13 +648,16 @@ public abstract class ZigBeeCoordinatorHandler extends BaseBridgeHandler
                     transportConfig.addOption(TransportConfigOption.RADIO_TX_POWER, configurationParameter.getValue());
                     break;
 
+                case ZigBeeBindingConstants.CONFIGURATION_CHANNEL:
+                    networkManager.setZigBeeChannel(ZigBeeChannel.create(channelId));
+                    break;
+
                 case ZigBeeBindingConstants.CONFIGURATION_LINKKEY:
                 case ZigBeeBindingConstants.CONFIGURATION_NETWORKKEY:
                 case ZigBeeBindingConstants.CONFIGURATION_POWERMODE:
                 case ZigBeeBindingConstants.CONFIGURATION_BAUD:
                 case ZigBeeBindingConstants.CONFIGURATION_FLOWCONTROL:
                 case ZigBeeBindingConstants.CONFIGURATION_PORT:
-                case ZigBeeBindingConstants.CONFIGURATION_CHANNEL:
                 case ZigBeeBindingConstants.CONFIGURATION_EXTENDEDPANID:
                 case ZigBeeBindingConstants.CONFIGURATION_INITIALIZE:
                     reinitialise = true;
@@ -911,6 +907,25 @@ public abstract class ZigBeeCoordinatorHandler extends BaseBridgeHandler
             case INITIALISING:
                 break;
             case ONLINE:
+                try {
+                    // Persist the network configuration
+                    ZigBeeChannel currentChannel = networkManager.getZigBeeChannel();
+                    int currentPanId = networkManager.getZigBeePanId();
+                    ExtendedPanId currentExtendedPanId = networkManager.getZigBeeExtendedPanId();
+
+                    Configuration configuration = editConfiguration();
+                    configuration.put(CONFIGURATION_PANID, currentPanId);
+                    if (currentExtendedPanId != null) {
+                        configuration.put(CONFIGURATION_EXTENDEDPANID, currentExtendedPanId.toString());
+                    }
+                    configuration.put(CONFIGURATION_CHANNEL, currentChannel.getChannel());
+
+                    // If the thing is defined statically, then this will fail and we will never start!
+                    updateConfiguration(configuration);
+                } catch (IllegalStateException e) {
+                    logger.error("Error updating configuration when network is ONLINE ", e);
+                }
+
                 updateStatus(ThingStatus.ONLINE);
                 if (reconnectPollingTimer != null) {
                     reconnectPollingTimer.cancel(true);

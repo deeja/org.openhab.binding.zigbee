@@ -4,13 +4,13 @@
   <parent>
     <groupId>org.openhab.addons</groupId>
     <artifactId>org.openhab.addons.reactor</artifactId>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>3.2.0-SNAPSHOT</version>
     <relativePath/>
   </parent>
 
   <groupId>org.openhab.addons.bundles</groupId>
   <artifactId>org.openhab.addons.zigbee.reactor</artifactId>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.2.0-SNAPSHOT</version>
   <!-- do not delete the version here as it is required by the release process -->
 
   <name>openHAB Add-ons :: Bundles :: ZigBee Reactor</name>
@@ -33,7 +33,7 @@
 
   <properties>
     <report.fail.on.error>false</report.fail.on.error>
-    <zsmartsystems.version>1.3.10</zsmartsystems.version>
+    <zsmartsystems.version>1.4.0</zsmartsystems.version>
     <spotless.version>2.0.3</spotless.version>
     <spotless.check.skip>true</spotless.check.skip> <!-- Spotless disabled for now -->
     <sat.version>0.10.0</sat.version>
@@ -47,6 +47,10 @@
   </scm>
 
   <distributionManagement>
+    <repository>
+      <id>jfrog-release</id>
+      <url>https://openhab.jfrog.io/openhab/libs-release-local</url>
+    </repository>
     <snapshotRepository>
       <id>jfrog</id>
       <url>https://openhab.jfrog.io/openhab/libs-snapshot-local</url>
@@ -57,21 +61,18 @@
     <dependency>
       <groupId>org.openhab.core.bom</groupId>
       <artifactId>org.openhab.core.bom.compile</artifactId>
-      <version>${project.version}</version>
       <type>pom</type>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bom</groupId>
       <artifactId>org.openhab.core.bom.openhab-core</artifactId>
-      <version>${project.version}</version>
       <type>pom</type>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openhab.core.bom</groupId>
       <artifactId>org.openhab.core.bom.test</artifactId>
-      <version>${project.version}</version>
       <type>pom</type>
       <scope>test</scope>
     </dependency>
@@ -225,7 +226,6 @@
          <plugin>
            <groupId>org.apache.maven.plugins</groupId>
            <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M5</version>
          </plugin>
       <plugin>
         <groupId>org.commonjava.maven.plugins</groupId>
@@ -309,18 +309,6 @@
       </releases>
       <snapshots>
         <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>snapshots-zsmartsystems-com.zsmartsystems</id>
-      <name>zsmartsystems-com.zsmartsystems</name>
-      <url>https://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
-      <releases>
-          <enabled>false</enabled>
-          <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-          <enabled>true</enabled>
       </snapshots>
     </repository>
   </repositories>
